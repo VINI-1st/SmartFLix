@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - SmartFlix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #141414; color: white; font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
+        .header { padding: 20px 4%; background-color: #000; border-bottom: 1px solid #333; }
+        .logo { color: #E50914; font-size: 2.2rem; font-weight: bold; text-decoration: none; letter-spacing: 1px; }
+        .container { max-width: 800px; margin: 50px auto; padding: 0 20px; text-align: center; }
+        h1 { font-size: 2.5rem; margin-bottom: 30px; }
+        
+        /* THANH TÌM KIẾM */
+        .search-container { position: relative; width: 100%; max-width: 600px; margin: 0 auto 40px auto; }
+        .search-box { width: 100%; padding: 15px 20px 15px 50px; font-size: 1.1rem; border-radius: 4px; border: 1px solid #808080; background-color: white; color: black; outline: none; box-sizing: border-box; }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #808080; font-size: 1.2rem; }
+
+        /* DANH SÁCH CÂU HỎI (FAQ) */
+        .faq-list { text-align: left; }
+        .faq-item { background-color: #2b2b2b; margin-bottom: 10px; border-radius: 4px; overflow: hidden; }
+        .faq-question { padding: 20px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.3s; }
+        .faq-question:hover { background-color: #404040; }
+        
+        /* CÂU TRẢ LỜI ĐƯỢC ẨN ĐI MẶC ĐỊNH */
+        .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; background-color: #2b2b2b; color: #ccc; line-height: 1.6; }
+        
+        /* TRẠNG THÁI KHI BẤM MỞ (Hiệu ứng trượt) */
+        .faq-item.active .faq-answer { padding: 0 20px 20px 20px; max-height: 200px; }
+        .faq-item.active .faq-question .arrow { transform: rotate(180deg); color: #e50914; }
+        .arrow { transition: transform 0.3s; }
+
+        .btn-back { display: inline-block; margin-top: 40px; padding: 12px 25px; border: 1px solid #808080; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; transition: 0.3s; background: transparent; }
+        .btn-back:hover { background-color: white; color: black; border-color: white; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="logo">SMARTFLIX</a>
+    </div>
+    <div class="container">
+        <h1>Hi, how can we help?</h1>
+        
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" class="search-box" placeholder="Search help articles...">
+        </div>
+        
+        <div class="faq-list" id="faqList">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How to change password?</span>
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    To change your password, go back to the home page, click on your avatar in the top right corner, and select <strong>Account</strong>. Under the "Membership & Billing" section, click on the blue <strong>Change password</strong> link and enter your old/new passwords to complete.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Connection Error: Why can't I watch movies?</span>
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    If you encounter an error where the movie list does not load, please verify if the Backend Server (FastAPI) is running (use the command <code>uvicorn main:app --reload</code>). If the server is on, check your network connection or try pressing F5 to reload the page.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Accepted Payment Methods</span>
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    SmartFlix currently supports payments via International Credit/Debit Cards (Visa, Mastercard, JCB, Amex), popular regional e-wallets, and direct payments via domestic ATM cards.
+                </div>
+            </div>
+        </div>
+        
+        <a href="index.html" class="btn-back">Back to Home</a>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        searchInput.addEventListener('keyup', function() {
+            const keyword = this.value.toLowerCase().trim();
+            
+            faqItems.forEach(item => {
+                const questionText = item.querySelector('.faq-question span').innerText.toLowerCase();
+                if(questionText.includes(keyword)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        const questions = document.querySelectorAll('.faq-question');
+        
+        questions.forEach(question => {
+            question.addEventListener('click', () => {
+                const parentItem = question.parentElement;
+                parentItem.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>

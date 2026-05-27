@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFlix - Unlimited movies, TV shows, and more</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #000; color: white; overflow-x: hidden; }
+        .header { position: absolute; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 24px 5%; z-index: 10; }
+        .logo { color: #E50914; font-size: 40px; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
+        .logo span { color: white; }
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .btn-login-top { background-color: #E50914; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; }
+        .btn-login-top:hover { background-color: #c90812; }
+        #landing-view { display: flex; flex-direction: column; width: 100%; }
+        .hero-section {
+            position: relative; height: 90vh; min-height: 600px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            background-image: url('backgrnetflix.jpg');
+            background-size: cover; background-position: center;
+            border-bottom: 8px solid #232323; 
+        }
+        .hero-section::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            background-image: linear-gradient(to top, rgba(0,0,0,1) 0, rgba(0,0,0,0) 60%, rgba(0,0,0,0.8) 100%); 
+            z-index: 1;
+        }
+        .landing-content { position: relative; z-index: 2; max-width: 950px; padding: 0 20px; margin-top: 50px; }
+        .landing-content h1 { font-size: 3rem; font-weight: 900; margin-bottom: 1rem; }
+        .landing-content p { font-size: 1.25rem; font-weight: 400; margin-bottom: 1rem; }
+        .email-form { display: flex; justify-content: center; gap: 10px; max-width: 700px; margin: 0 auto; }
+        .email-form input { flex: 1; padding: 16px 20px; font-size: 1rem; color: white; background: rgba(22, 22, 22, 0.7); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 4px; outline: none; }
+        .email-form input:focus { border-color: white; background: rgba(0, 0, 0, 0.8); }
+        .btn-get-started { padding: 16px 32px; font-size: 1.5rem; font-weight: bold; background-color: #E50914; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .btn-get-started:hover { background-color: #c90812; }
+        .content-section { padding: 60px 5%; border-bottom: 8px solid #232323; z-index: 2; position: relative; background-color: transparent; }
+        .content-section h2 { font-size: 24px; margin-bottom: 20px; font-weight: 700; }
+        .trending-container { display: flex; overflow-x: auto; gap: 40px; padding-bottom: 20px; padding-left: 20px; scroll-behavior: smooth; }
+        .trending-container::-webkit-scrollbar { height: 8px; }
+        .trending-container::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
+        .trending-card { position: relative; min-width: 200px; cursor: pointer; display: flex; align-items: flex-end; transition: transform 0.3s; }
+        .trending-card:hover { transform: scale(1.05); }
+        .rank-number { position: absolute; left: -30px; bottom: -15px; font-size: 140px; font-weight: 900; line-height: 1; letter-spacing: -5px; color: black; -webkit-text-stroke: 4px #595959; z-index: 1; }
+        .trending-card img { width: 140px; height: 200px; object-fit: cover; border-radius: 5px; position: relative; z-index: 2; margin-left: 40px; box-shadow: 4px 0 10px rgba(0,0,0,0.5); }
+        .reasons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .reason-card { background: linear-gradient(135deg, #19224d 0%, #1a1129 100%); padding: 30px 20px; border-radius: 15px; position: relative; min-height: 250px; }
+        .reason-card h3 { font-size: 24px; margin-bottom: 15px; }
+        .reason-card p { font-size: 16px; color: #aaa; line-height: 1.5; }
+        .reason-icon { position: absolute; bottom: 20px; right: 20px; font-size: 40px; opacity: 0.5; }
+        #auth-view { display: none; height: 100vh; padding-top: 100px; position: relative; background: radial-gradient(circle at center 20%, #2a080a 0%, #000000 60%); z-index: 2; }
+        .auth-container { max-width: 450px; margin: 0 auto; padding: 60px 68px 40px; background: rgba(0,0,0,0.75); border-radius: 4px; }
+        .auth-container h1 { font-size: 32px; margin-bottom: 28px; }
+        .input-group { margin-bottom: 16px; }
+        .input-group input { width: 100%; padding: 16px 20px; font-size: 16px; color: white; background: #333; border: none; border-radius: 4px; outline: none; }
+        .input-group input:focus { background: #454545; }
+        .btn-submit { width: 100%; padding: 16px; font-size: 16px; font-weight: bold; background-color: #E50914; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 24px; }
+        .btn-submit:hover { background-color: #c90812; }
+        .toggle-text { margin-top: 50px; color: #737373; text-align: left; }
+        .toggle-text a { color: white; text-decoration: none; cursor: pointer; }
+        .toggle-text a:hover { text-decoration: underline; }
+        #error-msg { color: #e87c03; margin-bottom: 15px; display: none; font-size: 14px; }
+        .netflix-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; overflow-y: auto; }
+        .modal-content-box { background: #181818; width: 90%; max-width: 850px; margin: 40px auto; border-radius: 10px; position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8); animation: popIn 0.3s ease-out; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .close-modal-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 35px; cursor: pointer; z-index: 10; width: 40px; height: 40px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .close-modal-btn:hover { background: rgba(255,255,255,0.2); }
+        .modal-backdrop-container { position: relative; width: 100%; height: 400px; }
+        .modal-backdrop-container img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+        .modal-gradient { position: absolute; bottom: 0; left: 0; width: 100%; height: 200px; background: linear-gradient(to top, #181818 10%, transparent); }
+        .modal-info { padding: 0 40px 40px; position: relative; margin-top: -60px; z-index: 2; }
+        .modal-info h1 { font-size: 45px; font-weight: 900; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        .modal-tags { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
+        .tag-year { color: #46d369; font-weight: bold; font-size: 18px; }
+        .tag-box { background: #333; padding: 3px 8px; border-radius: 4px; font-size: 14px; font-weight: bold; color: #ddd; border: 1px solid #555; }
+        .modal-info p { font-size: 16px; line-height: 1.6; color: #fff; margin-bottom: 25px; max-width: 60%; }
+        .btn-modal-play { padding: 12px 32px; font-size: 1.2rem; font-weight: bold; background-color: #E50914; color: white; border: none; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .btn-modal-play:hover { background-color: #c90812; transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo" onclick="showLanding()">SMART<span>FLIX</span></div>
+        <div class="header-right" id="header-right">
+            <button class="btn-login-top" id="btn-top-login" onclick="showAuth(true)">Sign In</button>
+        </div>
+    </header>
+
+    <div id="landing-view">
+        <div class="hero-section">
+            <div class="landing-content">
+                <h1 id="landing-h1">Unlimited movies, TV shows, and more</h1>
+                <p id="landing-p">Ready to watch? Enter your email to create or restart your membership.</p>
+                <div class="email-form">
+                    <input type="email" id="landing-email" placeholder="Email address">
+                    <button class="btn-get-started" id="btn-get-started" onclick="goToRegister()">Get Started ></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 id="trending-title">Trending Now</h2>
+            <div class="trending-container" id="trending-list">
+                <p style="color: gray;">Connecting to Server...</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 id="reasons-title">More reasons to join</h2>
+            <div class="reasons-grid">
+                <div class="reason-card">
+                    <h3 id="r1-title">Enjoy on your TV</h3>
+                    <p id="r1-desc">Watch on Smart TVs, Playstation, Xbox, Chromecast, Apple TV, Blu-ray players, and more.</p>
+                    <div class="reason-icon">📺</div>
+                </div>
+                <div class="reason-card">
+                    <h3 id="r2-title">Download your shows to watch offline</h3>
+                    <p id="r2-desc">Save your favorites easily and always have something to watch.</p>
+                    <div class="reason-icon">⬇️</div>
+                </div>
+                <div class="reason-card">
+                    <h3 id="r3-title">Watch everywhere</h3>
+                    <p id="r3-desc">Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV.</p>
+                    <div class="reason-icon">💻</div>
+                </div>
+                <div class="reason-card">
+                    <h3 id="r4-title">Create profiles for kids</h3>
+                    <p id="r4-desc">Send kids on adventures with their favorite characters in a space made just for them—free with your membership.</p>
+                    <div class="reason-icon">🧸</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-view">
+        <div class="auth-container">
+            <h1 id="auth-title">Sign In</h1>
+            <p id="error-msg"></p>
+            <div class="input-group" id="group-username" style="display: none;">
+                <input type="text" id="username" placeholder="Your display name (e.g. Vinh)">
+            </div>
+            <div class="input-group">
+                <input type="email" id="email" placeholder="Email or mobile number">
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password">
+            </div>
+            <button class="btn-submit" id="btn-action" onclick="submitForm()">Sign In</button>
+            <div class="toggle-text">
+                <span id="switch-text">New to SmartFlix? </span>
+                <a onclick="toggleMode()" id="switch-link">Sign up now.</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="movie-modal" class="netflix-modal">
+        <div class="modal-content-box">
+            <span class="close-modal-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-backdrop-container">
+                <img id="modal-img" src="" alt="Cover">
+                <div class="modal-gradient"></div>
+            </div>
+            <div class="modal-info">
+                <h1 id="modal-title">Movie Title</h1>
+                <div class="modal-tags">
+                    <span class="tag-year" id="modal-year">2026</span>
+                    <span class="tag-box">T16</span>
+                    <span class="tag-box" id="tag-action">Action</span>
+                    <span class="tag-box" id="tag-trending">Trending</span>
+                </div>
+                <p id="modal-desc">Overview updating...</p>
+                <button class="btn-modal-play" id="btn-modal-start" onclick="closeModal(); showAuth(true);">Get Started ></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000/api";
+        let isLoginMode = true;
+
+        async function loadTrendingMovies() {
+            try {
+                const response = await fetch(`${API_BASE}/movies?limit=10`);
+                const movies = await response.json();
+                const trendingList = document.getElementById("trending-list");
+                trendingList.innerHTML = ""; 
+                
+                movies.forEach((movie, index) => {
+                    const div = document.createElement("div");
+                    div.className = "trending-card";
+                    div.onclick = () => openModal(movie);
+                    div.innerHTML = `
+                        <div class="rank-number">${index + 1}</div>
+                        <img src="${movie.poster}" alt="${movie.title}" title="${movie.title}">
+                    `;
+                    trendingList.appendChild(div);
+                });
+            } catch (error) {
+                document.getElementById("trending-list").innerHTML = "<p style='color:red;'>Error: Python Backend Server is not running!</p>";
+            }
+        }
+
+        function openModal(movie) {
+            document.getElementById('movie-modal').style.display = 'block';
+            document.getElementById('modal-img').src = movie.poster; 
+            document.getElementById('modal-title').innerText = movie.title;
+            document.getElementById('modal-year').innerText = movie.year || "2024";
+            
+            let desc = movie.overview || "Overview updating...";
+            if(desc.length > 250) desc = desc.substring(0, 250) + "...";
+            document.getElementById('modal-desc').innerText = desc;
+        }
+
+        function closeModal() {
+            document.getElementById('movie-modal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('movie-modal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function showLanding() {
+            document.getElementById('landing-view').style.display = 'flex';
+            document.getElementById('auth-view').style.display = 'none';
+            document.getElementById('header-right').style.display = 'flex'; 
+        }
+
+        function showAuth(loginMode = true) {
+            document.getElementById('landing-view').style.display = 'none';
+            document.getElementById('auth-view').style.display = 'block';
+            document.getElementById('header-right').style.display = 'none'; 
+            isLoginMode = loginMode;
+            updateAuthUI();
+            window.scrollTo(0, 0); 
+        }
+
+        function goToRegister() {
+            const emailInput = document.getElementById('landing-email').value;
+            showAuth(false);
+            if(emailInput) document.getElementById('email').value = emailInput;
+        }
+
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            updateAuthUI();
+        }
+
+        function updateAuthUI() {
+            document.getElementById('error-msg').style.display = 'none';
+            if (isLoginMode) {
+                document.getElementById('auth-title').innerText = "Sign In";
+                document.getElementById('group-username').style.display = "none";
+                document.getElementById('switch-text').innerText = "New to SmartFlix? ";
+                document.getElementById('switch-link').innerText = "Sign up now.";
+                document.getElementById('btn-action').innerText = "Sign In";
+            } else {
+                document.getElementById('auth-title').innerText = "Sign Up";
+                document.getElementById('group-username').style.display = "block";
+                document.getElementById('switch-text').innerText = "Already have an account? ";
+                document.getElementById('switch-link').innerText = "Sign in.";
+                document.getElementById('btn-action').innerText = "Sign Up";
+            }
+        }
+
+        async function submitForm() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const username = document.getElementById("username").value;
+            const errorMsg = document.getElementById("error-msg");
+
+            if (!email || !password || (!isLoginMode && !username)) {
+                errorMsg.innerText = "Please fill in all fields!";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            const endpoint = isLoginMode ? "/login" : "/register";
+            const payload = isLoginMode ? { email, password } : { username, email, password };
+
+            try {
+                const response = await fetch(API_BASE + endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (isLoginMode) {
+                        localStorage.setItem("smartflix_user", JSON.stringify(data.user));
+                        localStorage.setItem("userId", data.user.id);
+                        window.location.href = "profiles.html"; 
+                    } else {
+                        alert("Registration successful! Please sign in.");
+                        toggleMode(); 
+                    }
+                } else {
+                    errorMsg.innerText = data.detail || "An error occurred!";
+                    errorMsg.style.display = "block";
+                }
+            } catch (error) {
+                errorMsg.innerText = "Cannot connect to server!";
+                errorMsg.style.display = "block";
+            }
+        }
+
+        window.onload = loadTrendingMovies;
+    </script>
+</body>
+</html>

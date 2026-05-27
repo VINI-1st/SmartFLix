@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFlix - Ultimate Movie Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-left">
+            <h1 class="logo" onclick="location.reload()" style="cursor:pointer; color: #E50914; font-weight: 900; letter-spacing: 1px;">SMARTFLIX</h1>
+            
+            <ul class="nav-links">
+                <li><a href="javascript:void(0);" class="active" onclick="switchTab('home', this)">Home</a></li>
+                <li><a href="javascript:void(0);" onclick="switchTab('series', this)">Series</a></li>
+                <li><a href="javascript:void(0);" onclick="switchTab('movies', this)">Films</a></li>
+                <li><a href="javascript:void(0);" onclick="switchTab('new-popular', this)">New & Popular</a></li>
+                <li><a href="javascript:void(0);" onclick="switchTab('mylist', this)">My List</a></li>
+                <li><a href="javascript:void(0);" onclick="switchTab('languages', this)">Browse by Languages</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon" onclick="toggleSearch()" style="cursor: pointer;"></i>
+            <input type="text" id="searchInput" placeholder="Titles, people, genres..." onkeyup="if(event.key === 'Enter') searchMovies()"
+                    autocomplete="off" spellcheck="false">
+            <button onclick="searchMovies()" style="display:none;">Search</button>
+        </div>
+            
+            <div class="dropdown">
+                <div class="user-profile">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="Profile">
+                    <span style="font-size: 0.6rem; margin-left: 5px;">▼</span>
+                </div>
+                
+                <div class="dropdown-content netflix-menu">
+                    <div class="menu-profiles"></div>
+                    <div class="menu-options">
+                        <a href="javascript:void(0);" onclick="switchProfile()" style="cursor: pointer; color: white; text-decoration: none; display: flex; align-items: center; margin-bottom: 15px;">
+                            <i class="fa-solid fa-pen" style="width: 25px; font-size: 1.1rem; color: #b3b3b3;"></i>
+                            <span>Manage Profiles</span>
+                        </a>
+                        <a href="javascript:void(0);" onclick="switchProfile()" style="cursor: pointer; color: white; text-decoration: none; display: flex; align-items: center; margin-bottom: 15px;">
+                            <i class="fa-solid fa-users-viewfinder" style="width: 25px; font-size: 1.1rem; color: #b3b3b3;"></i>
+                            <span>Transfer Profile</span>
+                        </a>
+                        <a href="account.html" style="cursor: pointer; color: white; text-decoration: none; display: flex; align-items: center; margin-bottom: 15px;">
+                            <i class="fa-regular fa-user" style="width: 25px; font-size: 1.1rem; color: #b3b3b3;"></i>
+                            <span>Account</span>
+                        </a>
+                        <a href="help.html" style="cursor: pointer; color: white; text-decoration: none; display: flex; align-items: center; margin-bottom: 15px;">
+                            <i class="fa-regular fa-circle-question" style="width: 25px; font-size: 1.1rem; color: #b3b3b3;"></i>
+                            <span>Help Center</span>
+                        </a>
+                    
+                    <div style="border-top: 1px solid #333; margin: 15px 0;"></div>
+
+                    <a href="javascript:void(0);" onclick="logout()" style="cursor: pointer; color: white; text-decoration: none; display: block; text-align: center; font-weight: bold;">
+                        Sign out of SmartFlix
+                    </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" id="hero-banner">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 id="hero-title" class="hero-title-img">Loading movie...</h1>
+            <p id="hero-desc">AI is picking a random movie for you.</p>
+            <div class="hero-btns">
+                <button id="hero-play-btn" class="btn-play">
+                    ▶ Play
+                </button>
+                <button class="btn-more-info" onclick="document.getElementById('movieModal').style.display = 'block'">ⓘ More Info</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="search-container" style="display: none; padding: 120px 4% 50px 4%; position: relative; z-index: 10;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 class="section-title" style="margin: 0; font-size: 1.5rem;">Results for: <span id="search-keyword" style="color: #E50914;"></span></h2>
+                <button onclick="clearSearch()" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 20px; border-radius: 4px; cursor: pointer; transition: 0.3s; font-weight: bold; font-size: 0.9rem;">✖ Close search</button>
+            </div>
+            <div id="search-results-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;"></div>
+        </div>
+
+        <div id="tab-home" class="tab-container">
+            <h3 class="section-title">Continue Watching</h3>
+            <div class="movie-row" id="history-list"></div>
+
+            <h3 class="section-title">My List</h3>
+            <div class="movie-row" id="watchlist-home"></div>
+
+            <h3 class="section-title">Top Picks For You</h3>
+            <div class="movie-row" id="home-top-picks"></div>
+
+            <h3 class="section-title">Top 10 Series in Vietnam Today</h3>
+            <div class="top10-row" id="home-top10-series"></div>
+
+            <h3 class="section-title">Top 10 Films in Vietnam Today</h3>
+            <div class="top10-row" id="home-top10-movies"></div>
+
+            <h3 class="section-title">Romance <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Drama</h3>
+            <div class="movie-row" id="home-romance-list"></div>
+
+            <h3 class="section-title">Thrilling <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Suspense</h3>
+            <div class="movie-row" id="home-thriller-list"></div>
+
+            <h3 class="section-title">Crowd Favorites</h3>
+            <div class="movie-row" id="home-comedy-list"></div>
+
+            <h3 class="section-title">Explore the Universe <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Sci-Fi</h3>
+            <div class="movie-row" id="home-scifi-list"></div>
+
+            <h3 class="section-title">Family <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Kids</h3>
+            <div class="movie-row" id="home-family-list"></div>
+            
+            <h3 class="section-title">Endless Adventures</h3>
+            <div class="movie-row" id="home-adventure-list"></div>
+
+            <h3 class="section-title">Mystery <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Mind-Bending</h3>
+            <div class="movie-row" id="home-mystery-list"></div>
+
+            <h3 class="section-title">Magic <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Fantasy</h3>
+            <div class="movie-row" id="home-fantasy-list"></div>
+
+            <h3 class="section-title">Based on True Events</h3>
+            <div class="movie-row" id="home-history-list"></div>
+
+            <h3 class="section-title">Music <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Musicals</h3>
+            <div class="movie-row" id="home-music-list"></div>
+        </div>
+
+        <div id="tab-series" class="tab-container" style="display: none;">
+            
+            <div style="padding: 30px 4% 0 4%;">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                    <h1 style="font-size: 2.2rem; margin: 0; font-weight: bold; color: white;">Series</h1>
+                    <select id="series-genre-select" style="background: rgba(0,0,0,0.8); color: white; border: 1px solid white; padding: 8px 16px; font-size: 1.1rem; cursor: pointer;" onchange="filterSeriesByGenre(this.value)">
+                        <option value="all">All Genres</option>
+                        <option value="10759">Action & Adventure</option>
+                        <option value="16">Animation</option>
+                        <option value="35">Comedy</option>
+                        <option value="80">Crime</option>
+                        <option value="99">Documentary</option>
+                        <option value="18">Drama</option>
+                        <option value="10751">Family</option>
+                        <option value="10762">Kids</option>
+                        <option value="9648">Mystery</option>
+                        <option value="10765">Sci-Fi & Fantasy</option>
+                        <option value="10764">Reality</option>
+                        <option value="10768">War & Politics</option>
+                        <option value="37">Western</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="default-series-content">
+                <h3 class="section-title">Crime <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Justice</h3>
+                <div class="movie-row" id="series-crime-list"></div>
+
+                <h3 class="section-title">Mystery Series</h3>
+                <div class="movie-row" id="series-mystery-list"></div>
+
+                <h3 class="section-title">Drama <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Psychological</h3>
+                <div class="movie-row" id="series-drama-list"></div>
+
+                <h3 class="section-title">Comedy <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Sitcoms</h3>
+                <div class="movie-row" id="series-comedy-list"></div>
+
+                <h3 class="section-title">Sci-Fi <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Fantasy Universe</h3>
+                <div class="movie-row" id="series-scifi-list"></div>
+
+                <h3 class="section-title">Fun Animation</h3>
+                <div class="movie-row" id="animation-list"></div>
+            </div>
+
+            <div id="filtered-series-content" style="display: none; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px 4%;"></div>
+        </div>
+
+        <div id="tab-movies" class="tab-container" style="display: none;">
+            <div style="padding: 30px 4% 0 4%;">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                    <h1 style="font-size: 2.2rem; margin: 0; font-weight: bold; color: white;">Films</h1>
+                    <select id="movie-genre-select" style="background: rgba(0,0,0,0.8); color: white; border: 1px solid white; padding: 8px 16px; font-size: 1.1rem; cursor: pointer;" onchange="filterMoviesByGenre(this.value)">
+                        <option value="all">All Genres</option>
+                        <option value="28">Action</option>
+                        <option value="12">Adventure</option>
+                        <option value="16">Animation</option>
+                        <option value="35">Comedy</option>
+                        <option value="80">Crime</option>
+                        <option value="99">Documentary</option>
+                        <option value="18">Drama</option>
+                        <option value="10751">Family</option>
+                        <option value="14">Fantasy</option>
+                        <option value="36">History</option>
+                        <option value="27">Horror</option>
+                        <option value="10402">Music</option>
+                        <option value="9648">Mystery</option>
+                        <option value="10749">Romance</option>
+                        <option value="878">Sci-Fi</option>
+                        <option value="53">Thriller</option>
+                        <option value="10752">War</option>
+                        <option value="37">Western</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="default-movies-content">
+                <h3 class="section-title">Newly Added</h3>
+                <div class="movie-row" id="movie-list"></div>
+
+                <h3 class="section-title">Action <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Explosions</h3>
+                <div class="movie-row" id="action-list"></div>
+
+                <h3 class="section-title">Horror <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Thriller</h3>
+                <div class="movie-row" id="horror-list"></div>
+
+                <h3 class="section-title">Comedy <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Romance</h3>
+                <div class="movie-row" id="movie-comedy-list"></div>
+
+                <h3 class="section-title">Sci-Fi <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Fantasy</h3>
+                <div class="movie-row" id="movie-scifi-list"></div>
+
+                <h3 class="section-title">Suspense <span style="font-family: Arial, sans-serif; font-weight: bold;">&</span> Crime</h3>
+                <div class="movie-row" id="movie-thriller-list"></div>
+            </div>
+
+            <div id="filtered-movies-content" style="display: none; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px 4%;"></div>
+        </div>
+        
+        <div id="tab-new-popular" class="tab-container" style="display: none;">
+            <div style="padding: 30px 4% 0 4%;">
+                <h1 style="font-size: 2.2rem; margin: 0 0 20px 0; font-weight: bold; color: white;">New & Popular</h1>
+            </div>
+
+            <h3 class="section-title">New on SmartFlix</h3>
+            <div class="movie-row" id="new-added-list"></div>
+
+            <h3 class="section-title">Top 10 Series in Vietnam Today</h3>
+            <div class="top10-row" id="top10-series-list"></div>
+
+            <h3 class="section-title">Top 10 Films in Vietnam Today</h3>
+            <div class="top10-row" id="top10-movies-list"></div>
+
+            <h3 class="section-title">Worth the Wait</h3>
+            <div class="movie-row" id="worth-wait-list"></div>
+        </div>
+
+        <div id="tab-mylist" class="tab-container" style="display: none;">
+            <div style="padding: 120px 4% 20px 4%;">
+                <h1 style="font-size: 2.2rem; margin: 0; font-weight: bold; color: white;">My List</h1>
+            </div>
+            <div class="movie-grid" id="watchlist-page"></div>
+        </div>
+
+        <div id="tab-languages" class="tab-container browse-language-container" style="display: none; padding-top: 100px; min-height: 100vh; background-color: #141414;">
+            <div class="browse-header" style="padding: 0 4% 20px 4%;">
+                <h2 class="browse-title" style="font-size: 2.2rem; margin: 0; font-weight: bold; color: white;">Browse by Language</h2>
+                
+                    <div class="browse-filters" style="margin-top: 20px; display: flex; align-items: center; gap: 15px;">
+                    <span class="filter-label" style="color: #a3a3a3; font-size: 1.1rem;">Select Language</span>
+                    
+                    <div class="custom-select-wrapper">
+                        <select id="lang-select" class="netflix-select" style="background: rgba(0,0,0,0.8); color: white; border: 1px solid white; padding: 8px 16px; font-size: 1.1rem; cursor: pointer; border-radius: 4px;">
+                            <option value="en">English (Anh/Mỹ)</option>
+                            <option value="ko">Korean (Hàn Quốc)</option>
+                            <option value="vi">Vietnamese (Việt Nam)</option>
+                            <option value="zh">Chinese (Trung Quốc)</option>
+                            <option value="ja">Japanese (Nhật Bản)</option>
+                            <option value="es">Spanish (Tây Ban Nha)</option>
+                            <option value="it">Italian (Ý)</option>
+                            <option value="fr">French (Pháp)</option>
+                            <option value="th">Thai (Thái Lan)</option>
+                            <option value="hi">Hindi (Ấn Độ)</option>
+                            <option value="de">German (Đức)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="language-movies-grid" class="movies-grid"></div>
+        </div>
+    </main>
+
+    <div id="movieModal" class="modal">
+        <div class="modal-content detail-modal">
+            <span class="close-btn" onclick="closeModal()">✖</span>
+            
+            <div class="modal-hero" id="modal-hero">
+                <div class="modal-hero-gradient"></div>
+                <div class="modal-hero-content">
+                    <h1 id="modal-detail-title" class="modal-title-text">Movie Title</h1>
+                    <div class="modal-action-btns">
+                        <button class="btn-play" id="modal-play-btn">▶ Play</button>
+                        <button class="btn-circle" id="modal-add-btn" title="Add to My List">+</button>
+                        <button class="btn-circle" id="modal-like-btn" title="Like">👍</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-info-grid">
+                <div class="modal-info-left">
+                    <div class="modal-metadata">
+                        <span id="modal-year">2024</span>
+                        <span class="age-rating" id="modal-rating">T16</span>
+                        <span id="modal-duration">2h 15m</span>
+                        <span class="hd-badge">HD</span>
+                    </div>
+                    <p id="modal-detail-desc" class="modal-overview">Loading content...</p>
+                </div>
+                <div class="modal-info-right">
+                    <p><strong>Cast:</strong> <span id="modal-cast">Loading...</span></p>
+                    <p><strong>Genres:</strong> <span id="modal-genres">Loading...</span></p>
+                </div>
+            </div>
+
+            <div id="series-episodes-section" style="display: none; padding: 0 40px 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: white; font-size: 1.5rem; margin: 0;">Episodes</h3>
+                    <select id="season-select" style="background: #242424; color: white; border: 1px solid #444; padding: 8px 15px; font-size: 1rem; cursor: pointer; border-radius: 4px;" onchange="changeSeason(this.value)">
+                        <option value="1">Season 1</option>
+                        <option value="2">Season 2</option>
+                    </select>
+                </div>
+                <div id="episodes-list" style="display: flex; flex-direction: column; gap: 15px;"></div>
+            </div>
+
+            <div style="padding: 0 40px 40px;">
+                <h3 style="margin-bottom: 20px; font-size: 18px; color: white;">More Like This (K-Means AI)</h3>
+                <div class="movie-row" id="recommend-list" style="padding: 0; flex-wrap: wrap;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column;">
+        <div style="width: 80%; max-width: 1000px; text-align: right; margin-bottom: 10px;">
+            <button onclick="closeVideo()" style="background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s;" onmouseover="this.style.color='#e50914'" onmouseout="this.style.color='white'">&times;</button>
+        </div>
+        <div style="width: 80%; max-width: 1000px; aspect-ratio: 16/9; background: #000; box-shadow: 0 0 50px rgba(0,0,0,0.8);">
+            <iframe id="videoFrame" src="" allowfullscreen allow="autoplay; fullscreen" frameborder="0" style="width: 100%; height: 100%; min-height: 80vh; border: none; display: block;"></iframe>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

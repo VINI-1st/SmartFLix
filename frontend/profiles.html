@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Who's watching? - SmartFlix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #141414; color: white; font-family: 'Roboto', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        .profile-gate { text-align: center; animation: fadeIn 0.8s ease; }
+        h1 { font-size: 3.5vw; font-weight: 500; margin-bottom: 30px; letter-spacing: 1px; }
+        
+        .profile-list { display: flex; justify-content: center; gap: 2vw; flex-wrap: wrap; }
+        .profile-card { width: 10vw; min-width: 120px; text-align: center; }
+        .avatar-wrapper { position: relative; width: 100%; padding-top: 100%; border-radius: 4px; overflow: hidden; border: 3px solid transparent; transition: border-color 0.3s; cursor: pointer; }
+        .profile-card img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .profile-name { margin-top: 15px; color: #808080; font-size: 1.3vw; transition: color 0.3s; cursor: pointer; }
+        
+        .profile-card:hover .avatar-wrapper { border-color: white; }
+        .profile-card:hover .profile-name { color: white; }
+
+        .manage-btn { margin-top: 50px; background: transparent; color: #808080; border: 1px solid #808080; padding: 10px 25px; font-size: 1.2vw; cursor: pointer; letter-spacing: 2px; transition: 0.3s; }
+        .manage-btn:hover { color: white; border-color: white; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; animation: fadeIn 0.3s ease; }
+        .modal-content { background: #141414; padding: 40px; border-radius: 8px; text-align: center; width: 400px; border: 1px solid #333; }
+        .modal-input { width: 90%; padding: 12px; margin: 20px 0; background: #333; border: none; color: white; border-radius: 4px; font-size: 1.1rem; outline: none; }
+        .modal-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; }
+        .btn-modal { flex: 1; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; border: none; }
+        .btn-cancel { background: transparent; border: 1px solid #808080; color: #808080; }
+        .btn-cancel:hover { color: white; border-color: white; }
+        .btn-save { background: white; color: black; }
+        .btn-save:hover { background: #ccc; }
+        .btn-delete { background: transparent; border: 1px solid #e50914; color: #e50914; }
+        .btn-delete:hover { background: #e50914; color: white; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div class="profile-gate">
+        <h1>Who's watching?</h1>
+        <div class="profile-list" id="profile-list"></div>
+        
+        <button class="manage-btn" id="btn-manage">MANAGE PROFILES</button>
+        
+        <div id="addProfileModal" class="modal-overlay">
+            <div class="modal-content">
+                <h2 style="margin-top: 0; font-weight: 500;">Add Profile</h2>
+                <p style="color: #808080; font-size: 0.9rem;">Add a profile for another person watching SmartFlix with you.</p>
+                <input type="text" id="newProfileName" class="modal-input" placeholder="Name">
+                <div class="modal-actions">
+                    <button class="btn-modal btn-cancel" onclick="document.getElementById('addProfileModal').style.display='none'">Cancel</button>
+                    <button class="btn-modal btn-save" onclick="createNewProfile()">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="editProfileModal" class="modal-overlay">
+            <div class="modal-content">
+                <h2 style="margin-top: 0; font-weight: 500;">Edit Profile</h2>
+                <input type="hidden" id="editProfileId"> <input type="text" id="editProfileName" class="modal-input">
+                <div class="modal-actions">
+                    <button class="btn-modal btn-delete" onclick="deleteProfile()">Delete Profile</button>
+                    <button class="btn-modal btn-cancel" onclick="document.getElementById('editProfileModal').style.display='none'">Cancel</button>
+                    <button class="btn-modal btn-save" onclick="saveEditProfile()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000";
+
+        // ==========================================
+        // 1. BỘ LỌC ID BỌC THÉP
+        // ==========================================
+        function getValidUserId() {
+            let rawId = localStorage.getItem("userId");
+            if (!rawId || rawId === "undefined" || rawId === "null") {
+                const userStr = localStorage.getItem("smartflix_user");
+                if (userStr && userStr !== "undefined" && userStr !== "null") {
+                    try {
+                        const u = JSON.parse(userStr);
+                        rawId = u.id || u.user_id || u.UserID || u.UserId; 
+                    } catch(e) { console.error("Error reading JSON:", e); }
+                }
+            }
+            const finalId = parseInt(rawId);
+            return isNaN(finalId) ? null : finalId; 
+        }
+
+        // ==========================================
+        // 2. TẢI DANH SÁCH HỒ SƠ 
+        // ==========================================
+        async function loadProfiles() {
+            const userId = getValidUserId();
+            if (!userId) {
+                localStorage.clear(); 
+                window.location.href = "login.html";
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/users/${userId}/profiles`);
+                const result = await res.json();
+                const listContainer = document.getElementById("profile-list");
+                listContainer.innerHTML = "";
+
+                if (result.status === "success" && result.data.length > 0) {
+                    result.data.forEach(profile => {
+                        const card = document.createElement("div");
+                        card.className = "profile-card";
+                        
+                        card.innerHTML = `
+                            <div class="avatar-wrapper" onclick="selectProfile(${profile.ProfileID}, '${profile.ProfileName}', '${profile.AvatarURL}')">
+                                <img src="${profile.AvatarURL}" alt="${profile.ProfileName}">
+                            </div>
+                            <div class="profile-name" onclick="selectProfile(${profile.ProfileID}, '${profile.ProfileName}', '${profile.AvatarURL}')">${profile.ProfileName}</div>
+                            <div onclick="openEditModal(${profile.ProfileID}, '${profile.ProfileName}')" style="color: #808080; font-size: 1vw; margin-top: 8px; font-weight: bold; cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#808080'">Edit</div>
+                        `;
+                        listContainer.appendChild(card);
+                    });
+                } else {
+                    listContainer.innerHTML = "<p style='color: #808080; font-size: 1.2rem; margin-top: 20px;'>No profiles found. Please click Manage Profiles to add one.</p>";
+                }
+            } catch (error) {
+                console.error("Error fetching profiles:", error);
+                document.getElementById("profile-list").innerHTML = "<p style='color: #E50914;'>Backend connection error!</p>";
+            }
+        }
+
+        // ==========================================
+        // 3. TẠO HỒ SƠ MỚI
+        // ==========================================
+        document.getElementById('btn-manage').onclick = () => {
+            document.getElementById('addProfileModal').style.display = 'flex';
+            document.getElementById('newProfileName').focus(); 
+        };
+
+async function createNewProfile() {
+            const nameInput = document.getElementById('newProfileName');
+            const name = nameInput.value.trim();
+            if(!name) { alert("Please enter a profile name!"); return; }
+
+            const validUserId = getValidUserId();
+            if (!validUserId) {
+                alert("Login data error. Please sign in again.");
+                localStorage.clear();
+                window.location.href = "login.html";
+                return;
+            }
+
+            const avatarList = [
+                "https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png",
+                "https://mir-s3-cdn-cf.behance.net/project_modules/disp/366be133850498.56ba69ac36858.png", 
+                "https://mir-s3-cdn-cf.behance.net/project_modules/disp/84c20033850498.56ba69ac290ea.png", 
+                "https://mir-s3-cdn-cf.behance.net/project_modules/disp/64623a33850498.56ba69ac2a6f7.png",
+                "https://mir-s3-cdn-cf.behance.net/project_modules/disp/e70b1333850498.56ba69ac32ae3.png"  
+            ];
+            
+            const randomAvatar = avatarList[Math.floor(Math.random() * avatarList.length)];
+
+            try {
+                const res = await fetch(`${API_BASE}/api/profiles`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        user_id: validUserId, 
+                        profile_name: name,
+                        avatar_url: randomAvatar,
+                        is_kid: 0
+                    })
+                });
+                
+                const data = await res.json();
+                if(data.status === "success") {
+                    document.getElementById('addProfileModal').style.display = 'none';
+                    nameInput.value = '';
+                    loadProfiles(); 
+                } else { alert("Server error: " + JSON.stringify(data)); }
+            } catch(e) { alert("Backend connection error!"); }
+        }
+
+        // ==========================================
+        // 4. CHỈNH SỬA & XÓA HỒ SƠ
+        // ==========================================
+        function openEditModal(id, currentName) {
+            document.getElementById('editProfileId').value = id;
+            document.getElementById('editProfileName').value = currentName;
+            document.getElementById('editProfileModal').style.display = 'flex';
+        }
+
+        async function saveEditProfile() {
+            const id = document.getElementById('editProfileId').value;
+            const newName = document.getElementById('editProfileName').value.trim();
+            if(!newName) { alert("Name cannot be empty"); return; }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/profiles/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ profile_name: newName })
+                });
+                const data = await res.json();
+                if(data.status === "success") {
+                    document.getElementById('editProfileModal').style.display = 'none';
+                    loadProfiles(); 
+                } else { alert("Error: " + JSON.stringify(data)); }
+            } catch(e) { alert("Backend connection error!"); }
+        }
+
+        async function deleteProfile() {
+            const confirmDelete = confirm("Are you sure? Favorites for this profile will be permanently deleted!");
+            if(!confirmDelete) return;
+
+            const id = document.getElementById('editProfileId').value;
+            try {
+                const res = await fetch(`${API_BASE}/api/profiles/${id}`, { method: "DELETE" });
+                const data = await res.json();
+                if(data.status === "success") {
+                    document.getElementById('editProfileModal').style.display = 'none';
+                    
+                    if(localStorage.getItem("activeProfileId") === id) {
+                        localStorage.removeItem("activeProfileId");
+                        localStorage.removeItem("activeProfileName");
+                        localStorage.removeItem("activeProfileAvatar");
+                    }
+                    
+                    loadProfiles(); 
+                } else { alert("Error: " + JSON.stringify(data)); }
+            } catch(e) { alert("Backend connection error!"); }
+        }
+
+        // ==========================================
+        // 5. CHỌN HỒ SƠ VÀO TRANG CHỦ
+        // ==========================================
+        function selectProfile(id, name, avatar) {
+            localStorage.setItem("activeProfileId", id);
+            localStorage.setItem("activeProfileName", name);
+            localStorage.setItem("activeProfileAvatar", avatar);
+            window.location.href = "index.html";
+        }
+
+        loadProfiles();
+    </script>
+</body>
+</html>

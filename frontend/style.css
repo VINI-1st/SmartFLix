@@ -1,0 +1,515 @@
+/* ==========================================
+   RESET CSS & NỀN CHUNG
+   ========================================== */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+body { 
+    background-color: #141414; 
+    color: white; 
+    overflow-x: hidden; 
+}
+
+/* ==========================================
+   1. THANH ĐIỀU HƯỚNG (NAVBAR)
+   ========================================== */
+.navbar {
+    position: fixed; width: 100%; top: 0; z-index: 999;
+    display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+    transition: background-color 0.4s ease;
+    padding: 0 40px;
+    height: 68px;
+}
+.navbar.scrolled { 
+    background-color: #141414 !important; 
+}
+.nav-left { display: flex; align-items: center; gap: 40px; }
+
+/* Đổi logo thành full đỏ, font đậm hơn */
+.logo { color: #E50914; font-size: 30px; letter-spacing: 2px; font-weight: 900; cursor: pointer; }
+.logo span { color: #E50914; } 
+
+/* CSS làm mịn thanh menu và tạo hình viên thuốc */
+.nav-links { display: flex; list-style: none; gap: 5px; align-items: center; margin-bottom: 0; }
+.nav-links li a { 
+    color: #e5e5e5; 
+    text-decoration: none; 
+    font-size: 15px; 
+    padding: 8px 16px; /* Bơm khoảng trống tạo hình viên thuốc */
+    border-radius: 20px; /* Bo góc tròn vo */
+    transition: all 0.3s ease; 
+    font-weight: 500;
+}
+
+/* Hiệu ứng khi di chuột vào */
+.nav-links li a:hover { 
+    color: #ffffff; 
+    background-color: rgba(255, 255, 255, 0.1); 
+}
+
+/* Hiệu ứng Nút Đang Chọn (giống ảnh ông gửi) */
+.nav-links li a.active { 
+    color: white; 
+    background-color: rgba(255, 255, 255, 0.2); 
+    font-weight: bold; 
+}
+.nav-right { display: flex; align-items: center; gap: 20px; }
+/* ==========================================
+   GIAO DIỆN THANH TÌM KIẾM (CHUẨN HÌNH VIÊN THUỐC)
+   ========================================== */
+/* Khung bọc ngoài */
+.search-box {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    padding: 4px 10px; 
+    border-radius: 30px; /* 🛑 BÍ KÍP: Bo tròn 2 đầu thành hình viên thuốc */
+}
+
+/* Khi thanh search được bật (Thêm class active) */
+.search-box.active {
+    background: rgba(0, 0, 0, 0.7); /* Nền đen trong suốt tệp vào Navbar */
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Viền màu xám sáng tinh tế */
+}
+
+/* Ô nhập chữ (Mặc định tàng hình) */
+#searchInput {
+    width: 0;
+    opacity: 0;
+    border: none !important; /* Triệt tiêu viền mặc định */
+    background: transparent !important; /* 🛑 Ép nền tàng hình 100% */
+    color: white !important; /* Chữ trắng */
+    outline: none !important; /* Tắt cái viền xanh khi nhấp chuột vào */
+    transition: width 0.3s ease, opacity 0.3s ease;
+    padding: 0;
+}
+
+/* Khi active thì bung ra */
+.search-box.active #searchInput {
+    width: 250px;
+    opacity: 1;
+    padding: 2px 10px;
+}
+
+/* Đổi màu chữ gợi ý (Placeholder) thành xám mờ */
+#searchInput::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Icon kính lúp */
+.search-icon {
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    display: inline-block;
+}
+.nav-icon { font-size: 20px; cursor: pointer; }
+.profile-menu { display: flex; align-items: center; gap: 10px; position: relative; }
+.profile-icon { width: 32px; height: 32px; border-radius: 4px; cursor: pointer; }
+.logout-btn { display: none; background: #e50914; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.profile-menu:hover .logout-btn { display: block; position: absolute; top: 40px; right: 0; }
+
+/* ==========================================
+   2. HERO BANNER (PHIM NGẪU NHIÊN Ở ĐẦU TRANG)
+   ========================================== */
+.hero { 
+    height: 90vh; 
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
+    display: flex; align-items: center; padding-left: 40px; position: relative;
+    transition: background-image 0.8s ease-in-out;
+}
+.hero-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%),
+                linear-gradient(to top, #141414 0%, rgba(0,0,0,0) 30%);
+    z-index: 1;
+}
+.hero-content { position: relative; z-index: 2; width: 45%; margin-top: 100px; }
+.hero-title-img { font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.45); }
+#hero-desc { font-size: 1.2vw; text-shadow: 2px 2px 4px rgba(0,0,0,0.45); margin-bottom: 30px; line-height: 1.5; font-weight: 500; }
+.hero-btns { display: flex; gap: 15px; }
+.btn-play, .btn-more-info { display: flex; align-items: center; justify-content: center; padding: 10px 24px; border-radius: 4px; font-size: 1.2rem; font-weight: bold; border: none; cursor: pointer; transition: 0.2s; }
+.btn-play { background-color: white; color: black; }
+.btn-play:hover { background-color: rgba(255, 255, 255, 0.7); }
+.btn-more-info { background-color: rgba(109, 109, 110, 0.7); color: white; }
+.btn-more-info:hover { background-color: rgba(109, 109, 110, 0.4); }
+
+/* ==========================================
+   3. HÀNG PHIM & THẺ PHIM (DỌC)
+   ========================================== */
+.section-title { margin: 30px 40px 15px; font-size: 1.2vw; font-weight: bold; color: #e5e5e5; z-index: 10; position: relative; }
+.movie-row { 
+    display: flex; overflow-x: auto; overflow-y: visible; 
+    padding: 0 40px 60px 40px; gap: 10px; scroll-behavior: smooth; 
+}
+.movie-row::-webkit-scrollbar { display: none; }
+.movie-row { -ms-overflow-style: none; scrollbar-width: none; }
+
+.movie-card {
+    width: 180px; 
+    height: 270px; 
+    flex-shrink: 0; cursor: pointer; border-radius: 4px; position: relative;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+}
+.movie-card > img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: block; }
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 40px 20px;
+    padding: 0 4% 60px 4%;
+}
+/* Bảng thông tin đen đen trượt xuống khi hover */
+.card-details {
+    display: none; position: absolute; bottom: 0; left: 0; width: 100%; 
+    background: #181818; padding: 10px; border-radius: 0 0 4px 4px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+    transform: translateY(100%); z-index: -1;
+}
+
+/* Hiệu ứng nở card khi hover */
+.movie-card:hover {
+    transform: scale(1.15) translateY(-5%);
+    z-index: 100; box-shadow: 0 10px 20px rgba(0,0,0,0.9);
+}
+.movie-card:hover .card-details { display: block; z-index: 101; }
+
+.card-details .controls { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.card-details .controls button { 
+    background: white; color: black; border: none; border-radius: 50%; 
+    width: 26px; height: 26px; cursor: pointer; font-size: 12px; font-weight: bold; 
+    display: flex; align-items: center; justify-content: center; 
+}
+.card-details .metadata { 
+    font-size: 11px; color: white; display: flex; gap: 6px; align-items: center; font-weight: bold; 
+}
+.match-score { color: #46d369; }
+.age-rating { border: 1px solid rgba(255,255,255,0.4); padding: 0 4px; }
+
+/* ==========================================
+   4. MODAL POP-UP CHI TIẾT PHIM
+   ========================================== */
+.modal { 
+    display: none; position: fixed; z-index: 9999; left: 0; top: 0; 
+    width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); overflow-y: auto; 
+}
+.detail-modal {
+    padding: 0 !important; 
+    background-color: #181818;
+    overflow: hidden;
+    width: 850px !important; 
+    margin: 5% auto;
+    border-radius: 10px;
+    position: relative;
+}
+
+.close-btn { 
+    position: absolute; top: 15px; right: 20px; z-index: 10;
+    background: #181818; width: 36px; height: 36px; border-radius: 50%; color: white;
+    display: flex; justify-content: center; align-items: center; font-size: 16px; cursor: pointer;
+}
+.close-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* Khu vực ảnh nền ngang của Modal */
+.modal-hero {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    background-size: cover;
+    background-position: center top;
+}
+.modal-hero-gradient {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
+    background: linear-gradient(to top, #181818 0%, transparent 100%);
+}
+.modal-hero-content {
+    position: absolute; bottom: 5%; left: 40px; z-index: 2;
+}
+.modal-title-text {
+    font-size: 3.5rem; font-weight: 900; margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+.modal-action-btns { display: flex; gap: 10px; align-items: center; }
+.btn-circle {
+    background: rgba(42,42,42,0.6); color: white; border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer;
+    display: flex; justify-content: center; align-items: center; transition: 0.2s;
+}
+.btn-circle:hover { border-color: white; background: rgba(255,255,255,0.1); }
+
+/* Khu vực Lưới chia 2 cột của Modal */
+.modal-info-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; 
+    gap: 30px;
+    padding: 20px 40px 40px;
+}
+.modal-metadata { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; font-weight: bold; }
+.hd-badge { border: 1px solid rgba(255,255,255,0.4); padding: 0 4px; border-radius: 3px; font-size: 10px; }
+.modal-overview { line-height: 1.6; font-size: 15px; }
+
+.modal-info-right p { font-size: 14px; margin-bottom: 10px; line-height: 1.5; color: #777;}
+.modal-info-right span { color: white; }
+
+/* =========================================
+   CSS DROPDOWN AVATAR - BẢN NÂNG CẤP MƯỢT MÀ
+   ========================================= */
+
+/* 1. Phần bọc ngoài (Bắt buộc phải có để giữ vị trí) */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px; /* Tạo khoảng không để chuột không bị trượt mất menu */
+    margin-bottom: -10px;
+}
+
+/* 2. Khung Menu (Ẩn mặc định, làm mượt góc cạnh) */
+.netflix-menu {
+    display: none; /* THẦN CHÚ ẨN MENU ĐÂY RỒI */
+    position: absolute;
+    right: 0;
+    top: 100%; /* Nằm ngay dưới Avatar */
+    min-width: 220px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Đổi viền thành màu xám mờ cho sang */
+    border-radius: 6px; /* Bo góc tròn mềm mại */
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.8); /* Đổ bóng nổi khối 3D */
+    padding: 10px 0;
+    z-index: 2000;
+}
+
+/* 3. Phép thuật: Rê chuột vào thì Hiện Menu + Trượt mượt mà */
+.dropdown:hover .netflix-menu {
+    display: block;
+    animation: menuFadeIn 0.3s ease; /* Gọi hiệu ứng trượt xuống */
+}
+
+/* Hiệu ứng trượt và mờ ảo (Animation) */
+@keyframes menuFadeIn {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* (Các phần dưới giữ nguyên) */
+.netflix-menu a {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 15px; color: white; text-decoration: none;
+    font-size: 0.85rem; transition: background-color 0.2s;
+}
+.netflix-menu a:hover { text-decoration: underline; }
+.menu-profiles { margin-bottom: 5px; }
+.avatar-small { width: 28px; border-radius: 4px; }
+.menu-divider { border: 0; height: 1px; background-color: rgba(255,255,255,0.2); margin: 10px 0; }
+.logout-link { justify-content: center; font-weight: bold; padding-top: 15px; padding-bottom: 15px; }
+/* ÉP KÍCH THƯỚC AVATAR GÓC PHẢI */
+.user-profile img {
+    width: 32px;          /* Chiều rộng cố định */
+    height: 32px;         /* Chiều cao cố định */
+    border-radius: 4px;   /* Bo góc cho giống Netflix */
+    object-fit: cover;    /* Chống méo ảnh */
+    vertical-align: middle; /* Căn giữa cho bằng với cái mũi tên ▼ */
+}
+
+/* Hàng tập phim chuẩn Netflix */
+.episode-row {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #181818;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    gap: 20px;
+}
+.episode-row:hover {
+    background: #232323;
+}
+.episode-number {
+    font-size: 1.4rem;
+    color: #666;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
+}
+.episode-thumbnail-wrapper {
+    width: 130px;
+    height: 75px;
+    flex-shrink: 0;
+    background: #333;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.episode-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.episode-info {
+    flex-grow: 1;
+}
+.episode-title {
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+}
+.episode-overview {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ==========================================
+   MENU THỂ LOẠI DROPDOWN CHUẨN NETFLIX
+   ========================================== */
+.dropdown-genre {
+    position: relative;
+}
+
+.dropdown-genre:hover .genre-menu {
+    display: grid !important; 
+}
+
+.genre-menu {
+    display: none;
+    position: absolute;
+    top: 40px; 
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 2px solid white;
+    min-width: 450px; 
+    z-index: 1000;
+    padding: 15px 20px;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 15px 10px;
+}
+
+.genre-menu a {
+    color: #e5e5e5 !important;
+    text-decoration: none;
+    font-size: 13px !important;
+    padding: 0 !important;
+    transition: color 0.2s;
+}
+
+.genre-menu a:hover {
+    color: #fff !important;
+    text-decoration: underline;
+}
+
+/* ==========================================
+   GIAO DIỆN TOP 10 (NEW & POPULAR)
+   ========================================== */
+.top10-row {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 20px 40px 60px 40px;
+    gap: 40px; /* Khoảng cách rộng hơn để nhường chỗ cho số */
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.top10-row::-webkit-scrollbar { display: none; }
+
+.top10-card {
+    position: relative;
+    min-width: 210px; /* Rộng hơn thẻ phim bình thường để chứa số */
+    height: 250px;
+    display: flex;
+    align-items: flex-end;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    flex-shrink: 0;
+}
+.top10-card:hover {
+    transform: scale(1.1) translateY(-5%);
+    z-index: 100;
+}
+
+/* Con số khổng lồ rỗng ruột */
+.top10-number {
+    position: absolute;
+    left: -25px; /* Kéo số lùi ra ngoài rìa trái */
+    bottom: -15px; 
+    font-size: 240px; /* Kích thước siêu to */
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -15px;
+    color: #141414; /* Tệp với màu nền web */
+    -webkit-text-stroke: 4px #595959; /* Viền xám chuẩn Netflix */
+    z-index: 1;
+}
+
+/* Vỏ bọc chứa cái ảnh poster */
+.top10-img-wrapper {
+    position: relative;
+    width: 140px;
+    height: 200px;
+    z-index: 2; /* Nổi đè lên trên con số */
+    margin-left: 60px; /* Đẩy ảnh sang phải nhường chỗ cho số */
+    border-radius: 4px;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.6);
+}
+.top10-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Cái cờ đỏ TOP 10 gắn góc phải */
+.top10-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #e50914;
+    color: white;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 3px 5px;
+    border-radius: 0 4px 0 4px;
+    z-index: 3;
+    text-align: center;
+    line-height: 1.1;
+}
+/* 1. KHUNG LƯỚI CHUẨN CHO TẤT CẢ CÁC TRANG (My List, Languages, Search...) */
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px 15px; /* Khoảng cách cực khít y hệt trang My List */
+    padding: 20px 40px;
+}
+
+/* 2. CẤU HÌNH THẺ PHIM ĐỂ CHUẨN BỊ NẨY POPUP */
+.movies-grid .movie-card {
+    position: relative;
+    overflow: visible; 
+    transition: transform 0.3s ease, z-index 0s;
+    cursor: pointer;
+}
+
+/* 3. HIỆU ỨNG HOVER (Phóng to, nổi lên trên và che hàng dưới) */
+.movies-grid .movie-card:hover {
+    transform: scale(1.1);
+    z-index: 100;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+}
+
+/* 4. TỰ ĐỘNG HIỆN POPUP KHI HOVER */
+.movies-grid .movie-card:hover .card-details {
+    display: block; 
+}
