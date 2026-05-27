@@ -24,27 +24,31 @@
 * **Machine Learning & Data ETL:** Pandas, Scikit-Learn (TF-IDF, K-Means), PyODBC.
 * **API Bên ngoài:** TMDB API (Dùng để lấy metadata phong phú và ảnh dự phòng).
 
-🚀 Hướng dẫn cài đặt (Chạy Local)
-1. Thiết lập Database
-Mở SQL Server Management Studio (SSMS).
 
-Mở file database/SmartFlix_Database_Setup.sql và chạy (Execute) để tạo database SmartFlix cùng toàn bộ các bảng.
+## 🚀 Hướng dẫn cài đặt (Chạy Local)
 
-2. Thiết lập Backend
-Mở Terminal tại thư mục gốc của dự án.
+### 1. Thiết lập Database
+1. Mở **SQL Server Management Studio (SSMS)**.
+2. Mở file `database/SmartFlix_Database_Setup.sql` và chạy (Execute) để tạo database `SmartFlix` cùng toàn bộ các bảng.
 
-Cài đặt các thư viện Python cần thiết:
-
+### 2. Thiết lập Backend
+1. Mở Terminal tại thư mục gốc của dự án.
+2. Cài đặt các thư viện Python cần thiết:
+```bash
    pip install -r requirements.txt
-Tạo một file .env ở thư mục gốc và cấu hình thông tin kết nối SQL Server của bạn:
-
+   ```
+3. Tạo một file `.env` ở thư mục gốc và cấu hình thông tin kết nối SQL Server của bạn:
+```env
    DB_SERVER=TEN_SERVER_CUA_BAN
    DB_NAME=SmartFlix
-Khởi động server FastAPI:
-
+   ```
+4. Khởi động server FastAPI:
+```bash
    uvicorn backend.main:app --reload
-3. Thiết lập Frontend
+   ```
+
+### 3. Thiết lập Frontend
 Giao diện Frontend được phục vụ trực tiếp thông qua FastAPI (Static Files). Sau khi Backend đã chạy, bạn chỉ cần mở trình duyệt và truy cập vào đường dẫn sau:
-
-
+```text
 [http://127.0.0.1:8000](http://127.0.0.1:8000)
+```
